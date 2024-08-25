@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, reactive, onMounted } from "vue"
+import { inject, ref, reactive, onMounted, onServerPrefetch } from "vue"
 import socketManager from '../socketManager.js'
 
 // #region global state
@@ -13,6 +13,7 @@ const socket = socketManager.getInstance()
 // #region reactive variable
 const chatContent = ref("")
 const chatList = reactive([])
+//const reverseItems = chatList.slice().reverse();
 // #endregion
 
 // #region lifecycle
@@ -24,9 +25,9 @@ onMounted(() => {
 // #region browser event handler
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
-
+  socket.emit("publishEvent", userName.value + "さん：" + chatContent.value)
   // 入力欄を初期化
-
+  chatContent.value = ""
 }
 
 // 退室メッセージをサーバに送信する
@@ -57,7 +58,7 @@ const onReceiveExit = (data) => {
 
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  chatList.push()
+  chatList.push(data)
 }
 // #endregion
 
@@ -76,7 +77,7 @@ const registerSocketEvent = () => {
 
   // 投稿イベントを受け取ったら実行
   socket.on("publishEvent", (data) => {
-
+    onReceivePublish(data)
   })
 }
 // #endregion
@@ -87,14 +88,14 @@ const registerSocketEvent = () => {
     <h1 class="text-h3 font-weight-medium">チャットルーム</h1>
     <div class="mt-10">
       <p>ログインユーザ：{{ userName }}さん</p>
-      <textarea variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
+      <textarea v-model="chatContent" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
       <div class="mt-5">
-        <button class="button-normal">投稿</button>
-        <button class="button-normal util-ml-8px">メモ</button>
+        <button class="button-normal" @click="onPublish">投稿</button>
+        <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
       </div>
       <div class="mt-5" v-if="chatList.length !== 0">
         <ul>
-          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
+          <li class="item mt-4" v-for="(chat, i) in chatList.slice().reverse()" :key="i">{{ chat }}</li>
         </ul>
       </div>
     </div>
