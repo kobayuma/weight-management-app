@@ -1,10 +1,4 @@
 export default (io, socket) => {
-  // socket.on("entryUserEvent", (data) => {
-  //   if (!data) {
-  //     return
-  //   }
-  //   console.log("入室したユーザー名：" + data)
-  // })
   // 入室メッセージをクライアントに送信する
   socket.on("enterEvent", (data) => {
     socket.broadcast.emit("enterEvent", data)

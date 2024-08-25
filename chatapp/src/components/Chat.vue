@@ -31,7 +31,7 @@ const onPublish = () => {
 
 // 退室メッセージをサーバに送信する
 const onExit = () => {
-
+  socket.emit("exitEvent", userName.value + "さんが退室しました。")
 }
 
 // メモを画面上に表示する
@@ -49,9 +49,10 @@ const onReceiveEnter = (data) => {
   chatList.push(data)
 }
 
+
 // サーバから受信した退室メッセージを受け取り画面上に表示する
 const onReceiveExit = (data) => {
-  chatList.push()
+  chatList.push(data)
 }
 
 // サーバから受信した投稿メッセージを画面上に表示する
@@ -65,12 +66,12 @@ const onReceivePublish = (data) => {
 const registerSocketEvent = () => {
   // 入室イベントを受け取ったら実行
   socket.on("enterEvent", (data) => {
-
+    onReceiveEnter(data)
   })
 
   // 退室イベントを受け取ったら実行
   socket.on("exitEvent", (data) => {
-
+    onReceiveExit(data)
   })
 
   // 投稿イベントを受け取ったら実行
