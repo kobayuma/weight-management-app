@@ -13,7 +13,6 @@ const socket = socketManager.getInstance()
 // #region reactive variable
 const chatContent = ref("")
 const chatList = reactive([])
-//const reverseItems = chatList.slice().reverse();
 // #endregion
 
 // #region lifecycle
@@ -26,8 +25,10 @@ onMounted(() => {
 const onPublish = () => {
   // 投稿文が空だった場合の処理
   if (chatContent.value === "") return
+  // 投稿時のJSTの取得
+  const publishedTime = new Date().toLocaleTimeString({ timeZone: 'Asia/Tokyo' });
   // 投稿メッセージをサーバに送信する
-  socket.emit("publishEvent", userName.value + "さん：" + chatContent.value)
+  socket.emit("publishEvent","[" + publishedTime + "]  " + userName.value + "さん：" + chatContent.value)
   // 入力欄を初期化
   chatContent.value = ""
 }
