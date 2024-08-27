@@ -3,6 +3,8 @@ import { provide, ref } from "vue"
 
 // #region reactive state
 const userName = ref("")
+provide("○○○○○○", userName);
+
 // #endregion
 
 // #region global variable
