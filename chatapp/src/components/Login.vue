@@ -39,7 +39,7 @@ const onEnter = () => {
     <h1 class="text-h3 font-weight-medium">ChatLogin</h1>
     <div class="mt-10">
       <p>ユーザー名</p>
-      <input type="text" class="user-name-text" v-model="inputUserName" />
+      <input type="text" class="user-name-text" v-model="inputUserName" @keypress.enter="onEnter"/>
     </div>
     <button type="button" @click="onEnter" class="button-normal">入室する</button>
   </div>
