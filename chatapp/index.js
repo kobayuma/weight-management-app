@@ -1,12 +1,13 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
 import path from 'node:path';
-
+import cors from 'cors';
 const app = express();
+
+
 const db = new sqlite3.Database(path.join(process.cwd(), 'tt.db'));
-
+app.use(cors());
 app.use(express.json());
-
 // テーブル作成のクエリ
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS users (
@@ -18,11 +19,19 @@ const createTableQuery = `
 `;
 
 // テーブルの作成
-db.run(createTableQuery, function(err) {
+db.run('DROP TABLE IF EXISTS users', function(err) {
   if (err) {
     console.error(err.message);
   } else {
-    console.log('テーブルが作成されました');
+    console.log('Table dropped.');
+    // テーブルを再作成
+    db.run(createTableQuery, function(err) {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log('テーブルが作成されました');
+      }
+    });
   }
 });
 
