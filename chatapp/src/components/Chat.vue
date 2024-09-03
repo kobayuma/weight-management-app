@@ -2,6 +2,11 @@
 import { inject, ref, reactive, onMounted, onServerPrefetch } from "vue"
 import socketManager from '../socketManager.js'
 
+
+// ユーザーの取得
+
+// データベース接続のクローズ
+
 // #region global state
 const userName = inject("userName")
 // #endregion
