@@ -90,7 +90,7 @@ const registerSocketEvent = () => {
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">チャットルーム</h1>
+    <h1 class="text-h3 font-weight-medium">Chat</h1>
     <div class="mt-10">
       <p>ログインユーザ：{{ userName }}さん</p>
       <textarea v-model.trim="chatContent" @keypress.enter="onPublish" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
@@ -104,6 +104,9 @@ const registerSocketEvent = () => {
         </ul>
       </div>
     </div>
+    <router-link to="/home/" class="link">
+      <button type="button" class="button-normal">Home</button>
+    </router-link>
     <router-link to="/" class="link">
       <button type="button" class="button-normal button-exit" @click="onExit">退室する</button>
     </router-link>

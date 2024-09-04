@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router"
 import Chat from "../components/Chat.vue"
 import Login from "../components/Login.vue"
+import Home from "../components/Home.vue"
+import Weights from "../components/Weights.vue"
+import Mealcontents from "../components/Mealcontents.vue"
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -10,16 +14,49 @@ const router = createRouter({
       name: "login",
       component: Login
     },{
-      path: "/chat/",
-      name: "chat",
-      component: Chat,
+      path: "/home/",
+      name: "home",
+      component: Home,
       beforeEnter: (to, from, next) => {
-        if(from.name === "login"){
+        if(from.name === "login" || from.name === "chat" || from.name === "weights" || from.name === "mealcontents"){
           next()
         } else {
           next({ name:"login" })
         }
       },
+    },{
+      path: "/chat/",
+      name: "chat",
+      component: Chat,
+      beforeEnter: (to, from, next) => {
+        if(from.name === "home"){
+          next()
+        } else {
+          next({ name:"login" })
+        }
+      },
+    },{
+      path: "/weights/",
+      name: "weights",
+      component: Weights,
+      beforeEnter: (to, from, next) => {
+        if(from.name === "home"){
+          next()
+        }else{
+          next({name:"login"})
+        }
+      }
+    },{
+      path: "/mealcontents/",
+      name: "mealcontents",
+      component: Mealcontents,
+      beforeEnter: (to, from, next) => {
+        if(from.name === "home"){
+          next()
+        }else{
+          next({name:"login"})
+        }
+      }
     }
   ],
 })
