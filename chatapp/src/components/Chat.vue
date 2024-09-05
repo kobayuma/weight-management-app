@@ -13,7 +13,6 @@ const socket = socketManager.getInstance()
 // #region reactive variable
 const chatContent = ref("")
 const chatList = reactive([])
-//const reverseItems = chatList.slice().reverse();
 // #endregion
 
 // #region lifecycle
@@ -23,9 +22,13 @@ onMounted(() => {
 // #endregion
 
 // #region browser event handler
-// 投稿メッセージをサーバに送信する
 const onPublish = () => {
-  socket.emit("publishEvent", userName.value + "さん：" + chatContent.value)
+  // 投稿文が空だった場合の処理
+  if (chatContent.value === "") return
+  // 投稿時のJSTの取得
+  const publishedTime = new Date().toLocaleTimeString({ timeZone: 'Asia/Tokyo' });
+  // 投稿メッセージをサーバに送信する
+  socket.emit("publishEvent","[" + publishedTime + "]  " + userName.value + "さん：" + chatContent.value)
   // 入力欄を初期化
   chatContent.value = ""
 }
@@ -37,6 +40,8 @@ const onExit = () => {
 
 // メモを画面上に表示する
 const onMemo = () => {
+  // 投稿文が空だった場合の処理
+  if (chatContent.value === "") return
   // メモの内容を表示
   chatList.push(userName.value + "さんのメモ：" + chatContent.value)
   // 入力欄を初期化
@@ -85,10 +90,10 @@ const registerSocketEvent = () => {
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">チャットルーム</h1>
+    <h1 class="text-h3 font-weight-medium">Chat</h1>
     <div class="mt-10">
       <p>ログインユーザ：{{ userName }}さん</p>
-      <textarea v-model="chatContent" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
+      <textarea v-model.trim="chatContent" @keypress.enter="onPublish" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
         <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
@@ -99,6 +104,9 @@ const registerSocketEvent = () => {
         </ul>
       </div>
     </div>
+    <router-link to="/home/" class="link">
+      <button type="button" class="button-normal">Home</button>
+    </router-link>
     <router-link to="/" class="link">
       <button type="button" class="button-normal button-exit" @click="onExit">退室する</button>
     </router-link>
