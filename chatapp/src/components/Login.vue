@@ -5,6 +5,7 @@ import socketManager from '../socketManager.js'
 
 // #region global state
 const userName = inject("userName")
+const inputPassword = ref("")
 // #endregion
 
 // #region local variable
@@ -20,8 +21,8 @@ const inputUserName = ref("")
 // 入室メッセージをクライアントに送信する
 const onEnter = () => {
   // ユーザー名が入力されているかチェック
-  if (inputUserName.value === "") {
-    alert("ユーザー名を入力してください。");
+  if (inputUserName.value === "" || inputPassword.value === "") {
+    alert("ユーザー名とパスワードを入力してください。");
     return 0;
   }
   // 入室メッセージを送信
@@ -30,6 +31,9 @@ const onEnter = () => {
   userName.value = inputUserName.value;
   // チャット画面へ遷移
   router.push({ name: "home" })
+}
+const goToRegister = () => {
+  router.push({ name: 'register' });
 }
 // #endregion
 </script>
@@ -41,7 +45,12 @@ const onEnter = () => {
       <p>ユーザー名</p>
       <input type="text" class="user-name-text" v-model="inputUserName" @keypress.enter="onEnter"/>
     </div>
+    <div class="mt-10">
+      <p>パスワード</p>
+      <input type="password" class="user-name-text" v-model="inputPassword" @keypress.enter="onEnter"/>
+    </div>
     <button type="button" @click="onEnter" class="button-normal">入室する</button>
+    <button type="button" @click="goToRegister" class="button-normal mt-4">新規登録</button>
   </div>
 </template>
 
