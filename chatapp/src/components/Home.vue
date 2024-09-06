@@ -1,7 +1,11 @@
 <script setup>
-
+import { inject } from "vue"
 import { useRouter } from "vue-router"
 import socketManager from '../socketManager.js'
+
+// #region global state
+const userName = inject("userName")
+// #endregion
 
 // #region local variable
 const router = useRouter()
@@ -24,6 +28,7 @@ const toMealcontents = () => {
 
 <template>
   <div class="mx-auto my-5 px-4">
+    <p>ログインユーザ：{{ userName }}さん</p>
     <h1 class="text-h3 font-weight-medium">Home</h1>
         <button type="button" @click="toChat" class="button-normal">Chat</button>
         <button type="button" @click="toWeights" class="button-normal">体重</button>
