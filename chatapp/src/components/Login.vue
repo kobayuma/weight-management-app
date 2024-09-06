@@ -2,6 +2,7 @@
 import { inject, ref } from "vue"
 import { useRouter } from "vue-router"
 import socketManager from '../socketManager.js'
+import OpenAI from "openai";
 
 // #region global state
 const userName = inject("userName")
@@ -36,6 +37,25 @@ const goToRegister = () => {
   router.push({ name: 'register' });
 }
 // #endregion
+
+const fetchOpenAIResponse = async () => {
+  const prompt = "大阪のおすすめの飲食店を教えて";
+
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "gpt-3.5-turbo",
+    });
+    console.log("Message content:", completion.choices[0].message.content);
+  } catch (error) {
+    console.error("Failed to fetch from OpenAI:", error);
+  }
+};
+const openai = new OpenAI({
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY, // process.envの代わりにimport.meta.envを使う
+  dangerouslyAllowBrowser: true, 
+});
+
 </script>
 
 <template>
@@ -51,6 +71,7 @@ const goToRegister = () => {
     </div>
     <button type="button" @click="onEnter" class="button-normal">入室する</button>
     <button type="button" @click="goToRegister" class="button-normal mt-4">新規登録</button>
+    <button type="button" @click="fetchOpenAIResponse" class="button-normal mt-4">GPT</button>
   </div>
 </template>
 
