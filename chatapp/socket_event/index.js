@@ -29,4 +29,17 @@ export default (io, socket) => {
   socket.on("publishEvent", (data) => {
     io.sockets.emit("publishEvent", data)
   })
+
+  socket.on("loginEvent", ({ username, password }, callback) => {
+    db.get("SELECT * FROM users JOIN passwords ON users.id = passwords.user_id WHERE users.name = ? AND passwords.password = ?", [username, password], (err, row) => {
+      if (err) {
+        callback({ success: false, message: "データベースエラー" });
+      } else if (row) {
+        callback({ success: true, message: "ログイン成功", userId: row.id });
+      } else {
+        callback({ success: false, message: "ユーザー名またはパスワードが間違っています" });
+      }
+    });
+  });  
 }
+
