@@ -25,6 +25,19 @@ export default (io, socket) => {
     io.sockets.emit("publishEvent", data)
   })
 
+  // ユーザー名とパスワードがDBに含まれているかを比較する
+  socket.on("loginEvent", ({ username, password }, callback) => {
+    db.get("SELECT * FROM users JOIN passwords ON users.id = passwords.user_id WHERE users.name = ? AND passwords.password = ?", [username, password], (err, row) => {
+      if (err) {
+        callback({ success: false, message: "データベースエラー" });
+      } else if (row) {
+        callback({ success: true, message: "ログイン成功", userId: row.id });
+      } else {
+        callback({ success: false, message: "ユーザー名またはパスワードが間違っています" });
+      }
+    });
+  });
+
   // 新規登録されたユーザー名とパスワードをDBにinsertする
   socket.on("userRegistration", (data) => {
     const { name, password } = data;
@@ -81,5 +94,6 @@ export default (io, socket) => {
         });
       });
     });
-  });
-}  
+  });  
+}
+
