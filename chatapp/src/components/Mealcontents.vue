@@ -1,5 +1,5 @@
 <script setup>
-import { ref　} from 'vue';
+import { ref } from 'vue';
 import socketManager from '../socketManager.js'
 
 // #region reactive variable
