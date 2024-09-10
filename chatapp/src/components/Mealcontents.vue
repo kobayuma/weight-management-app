@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref　} from 'vue';
 import socketManager from '../socketManager.js'
 
 // #region reactive variable
@@ -14,20 +14,18 @@ const drink = ref("")
 const socket = socketManager.getInstance()
 
 const fetchOpenAIResponse = () => {
-  if(mealTime.value === ""){
-    alert("食事時間を選択してください。")
-    return 0
+  if (mealTime.value === "") {
+    alert("食事時間を選択してください。");
+    return;
   }
   const inputPrompt = `${mealTime.value}の内容は、主食：${stapleFood.value}、主菜：${mainDish.value}、副菜：${sideDish.value}、飲み物：${drink.value}。エネルギーバランス
-(総カロリー摂取量とPFCバランス)と栄養素バランスの観点の二つの観点で10点満点で点数をつけて。また、おすすめのメニューを簡潔に教えて。`
-  socket.emit("promptEvent", { prompt: inputPrompt });
-};
-
-onMounted(() => {
-  socket.on("promptResponse", (data) => {
+(総カロリー摂取量とPFCバランス)と栄養素バランスの観点の二つの観点で10点満点で点数をつけて。また、おすすめのメニューを簡潔に教えて。`;
+  
+  socket.emit("promptEvent", { prompt: inputPrompt }, (data) => {
     gptResponse.value = data.response;
   });
-});
+};
+
 
 </script>
 

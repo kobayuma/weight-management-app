@@ -33,18 +33,18 @@ export default (io, socket) => {
   })
 
   // クライアント側から送られてきたプロンプトを受け取って、出力をクライアント側に送信する
-  socket.on("promptEvent", async (data) => {
+  socket.on("promptEvent", async (data, callback) => {
     try {
       const completion = await openai.chat.completions.create({
         messages: [{ role: 'user', content: data.prompt }],
         model: 'gpt-3.5-turbo',
       });
       const gptResponse = completion.choices[0].message.content;
-
-      socket.emit("promptResponse", { response: gptResponse });
+  
+      callback({ response: gptResponse });
     } catch (error) {
       console.error('Failed to fetch from OpenAI:', error);
-      socket.emit("promptResponse", { response: 'Error fetching from OpenAI' });
+      callback({ response: 'Error fetching from OpenAI' });
     }
   });
 
