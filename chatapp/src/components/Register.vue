@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, onMounted} from 'vue'
+import { inject, ref} from 'vue'
 import { useRouter } from "vue-router"
 import socketManager from '../socketManager.js'
 
@@ -12,12 +12,6 @@ const inputUserName = ref("")
 const inputPassword = ref("")
 // #endregion
 
-// #region lifecycle
-onMounted(() => {
-  registerSocketEvent()
-})
-// #endregion
-
 // #region browser event handler
 const onRegister = () => {
   // ユーザー名,パスワードが入力されているかチェック
@@ -25,24 +19,16 @@ const onRegister = () => {
     alert("すべてのフィールドに入力してください。");
     return;
   }
-  // ユーザー名とパスワードを一つのイベントでサーバーに送信
-  socket.emit("userRegistration", { name: inputUserName.value, password: inputPassword.value });
-}
-// #endregion
-const registerSocketEvent = () => {
-  socket.on("registrationSucesss", () => {
-    alert("登録が完了しました！")
-    // 全体で使用するnameに入力されたユーザー名を格納
-    userName.value = inputUserName.value;
-    router.push({name : "home"})
-  })
 
-  socket.on("userNameAlreadyExit", () => {
-    alert("このユーザー名は既に存在します。別の名前を入力してください。");
-  });
-
-  socket.on("registrationFailure", (data) => {
-    alert(`登録に失敗しました: ${data.message}`);
+  socket.emit("userRegistration", { registerUsername: inputUserName.value, registerPassword: inputPassword.value }, (response) => {
+    if (response.success) {
+      alert(response.message)
+      // 全体で使用するnameに入力されたユーザー名を格納
+      userName.value = inputUserName.value;
+      router.push({name : "home"})
+    } else {
+      alert(response.message)
+    }
   });
 }
 
