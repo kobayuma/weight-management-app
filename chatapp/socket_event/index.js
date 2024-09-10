@@ -39,44 +39,43 @@ export default (io, socket) => {
   });
 
   // 新規登録されたユーザー名とパスワードをDBにinsertする
-  socket.on("userRegistration", (data) => {
-    const { name, password } = data;
+  socket.on("userRegistration", ({registerUsername, registerPassword}, callback) => {
     
     db.serialize(() => {
       db.run('BEGIN TRANSACTION');
   
       // ユーザー名の重複チェック
-      db.get('SELECT COUNT(*) as count FROM users WHERE name = ?', [name], (err, row) => {
+      db.get('SELECT COUNT(*) as count FROM users WHERE name = ?', [registerUsername], (err, row) => {
         if (err) {
           console.error('Error checking user name:', err.message);
           db.run('ROLLBACK');
-          socket.emit("registrationFailure", { message: 'Error checking user name' })
+          callback({ success:false, message: "そのユーザー名は使用できません。"});
           return;
         }
         
         if (row.count > 0) {
           console.error('User name already exists.');
           db.run('ROLLBACK');
-          socket.emit("userNameAlreadyExit");
+          callback({ success:false, message: "このユーザー名は既に存在します。別の名前を入力してください。"});
           return;
         }
   
         // ユーザー名をusersテーブルに挿入
-        db.run('INSERT INTO users(name) VALUES (?)', [name], function(err){
+        db.run('INSERT INTO users(name) VALUES (?)', [registerUsername], function(err){
           if (err) {
             console.error('Error inserting user name:', err.message);
             db.run('ROLLBACK');
-            socket.emit("registrationFailure", { message: 'Error inserting user name' });
+            callback({ succsess: false, message: "登録に失敗しました。エラー内容：Error inserting user name"});
             return;
           }
           // 挿入されたユーザーのIDを取得
           const userId = this.lastID;
           // passwordとuser_idをpasswordsテーブルに挿入
-          db.run('INSERT INTO passwords(password, user_id) VALUES (?, ?)', [password, userId], function(err) {
+          db.run('INSERT INTO passwords(password, user_id) VALUES (?, ?)', [registerPassword, userId], function(err) {
             if (err) {
               console.error('Error inserting password:', err.message);
               db.run('ROLLBACK');
-              socket.emit("registrationFailure", { message: 'Error inserting password' });
+              callback({success: false, message: "登録に失敗しました。エラー内容：Error inserting password"});
               return;
             }
   
@@ -84,11 +83,11 @@ export default (io, socket) => {
             db.run('COMMIT', (err) => {
               if (err) {
                 console.error('Error committing transaction:', err.message);
-                socket.emit("registrationFailure", { message: 'Error committing transaction' });
+                callback({success: false, message: "登録に失敗しました。エラー内容：Error committing transaction"})
                 return;
               }
               console.log('User registration successful');
-              socket.emit("registrationSucesss")
+              callback({success: true, message: "登録が完了しました！"})
             });
           });
         });
