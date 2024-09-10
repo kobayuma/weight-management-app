@@ -26,12 +26,20 @@ const onEnter = () => {
     alert("ユーザー名とパスワードを入力してください。");
     return 0;
   }
-  // 入室メッセージを送信
-  socket.emit("enterEvent", inputUserName.value + "さんが入室しました。")
-  // 全体で使用するnameに入力されたユーザー名を格納
-  userName.value = inputUserName.value;
-  // チャット画面へ遷移
-  router.push({ name: "home" })
+  
+  //ログインイベントを送信
+  socket.emit("loginEvent", { username: inputUserName.value, password: inputPassword.value }, (response) => {
+    if (response.success) {
+      // 入室メッセージを送信
+      socket.emit("enterEvent", inputUserName.value + "さんが入室しました。")
+      // 全体で使用するnameに入力されたユーザー名を格納
+      userName.value = inputUserName.value;
+      // チャット画面へ遷移
+      router.push({ name: "home" });
+    } else{
+      alert(response.message)
+    }
+  });
 }
 const goToRegister = () => {
   router.push({ name: 'register' });
