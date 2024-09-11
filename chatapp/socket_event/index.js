@@ -1,7 +1,7 @@
 import { handlePromptEvent } from './gpt.js';
 import { handleLoginEvent, handleUserRegistration } from './auth.js'
 import { handleMealSubmission, handlePastMenu } from './meals.js';
-
+import db from '../db.js';
 
 export default (io, socket) => {
   // 入室メッセージをクライアントに送信する
