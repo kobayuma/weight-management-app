@@ -1,6 +1,7 @@
 import db from '../db.js'; 
 import { handlePromptEvent } from './gpt.js';
 import { handleLoginEvent, handleUserRegistration } from './auth.js'
+import { handleMealSubmission } from './meals.js';
 import { config } from 'dotenv';
 config();
 
@@ -22,6 +23,9 @@ export default (io, socket) => {
 
   // GPTへのプロンプトを受信する  
   socket.on("promptEvent", handlePromptEvent);
+
+  // 食事内容をDBに保存する
+  socket.on("mealsEvent", handleMealSubmission);
 
   // ユーザー名とパスワードがDBに含まれているかを比較する
   socket.on("loginEvent", (data, callback) => {

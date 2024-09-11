@@ -13,14 +13,31 @@ const drink = ref("")
 
 const socket = socketManager.getInstance()
 
-const fetchOpenAIResponse = () => {
+const submitMeals = () => {
   if (mealTime.value === "") {
     alert("食事時間を選択してください。");
     return;
   }
+  const mealData = {
+    mealTime: mealTime.value,
+    stapleFood: stapleFood.value,
+    mainDish: mainDish.value,
+    sideDish: sideDish.value,
+    drink: drink.value
+  };
+    
   const inputPrompt = `${mealTime.value}の内容は、主食：${stapleFood.value}、主菜：${mainDish.value}、副菜：${sideDish.value}、飲み物：${drink.value}。エネルギーバランス
 (総カロリー摂取量とPFCバランス)と栄養素バランスの観点の二つの観点で10点満点で点数をつけて。また、おすすめのメニューを簡潔に教えて。`;
   
+  
+  socket.emit('mealsEvent', mealData, (response) => {
+    if (response.success) {
+      alert('食事内容が保存されました');
+    } else {
+      alert('食事内容の保存に失敗しました: ' + response.message);
+    }
+  });
+
   socket.emit("promptEvent", { prompt: inputPrompt }, (data) => {
     gptResponse.value = data.response;
   });
@@ -71,7 +88,8 @@ const fetchOpenAIResponse = () => {
       </div>
     </div>
     
-    <button type="button" @click="fetchOpenAIResponse" class="button-submit">送信</button>
+    <button type="button" @click="submitMeals" class="button-submit">送信</button>
+
     <h3 class="subtitle">AIの評価</h3>
     <div v-if="gptResponse" class="response">
       <p>{{ gptResponse }}</p>

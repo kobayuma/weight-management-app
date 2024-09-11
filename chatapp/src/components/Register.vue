@@ -47,8 +47,8 @@ const onRegister = () => {
     </div>
     <button type="button" @click="onRegister" class="button-normal">登録する</button>
   </div>
-  <router-link to="/home/" class="link">
-      <button type="button" class="button-normal">Home</button>
+  <router-link to="/" class="link">
+      <button type="button" class="button-normal">login</button>
   </router-link>
 </template>
 
