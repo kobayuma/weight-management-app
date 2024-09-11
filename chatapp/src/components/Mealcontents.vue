@@ -53,6 +53,10 @@ const getPastMenu = () => {
 }
 
 const toGPT = () => {
+  if (mealTime.value === "") {
+    alert("食事時間を選択してください。");
+    return;
+  }
   const inputPrompt = `${mealTime.value}の内容は、主食：${stapleFood.value}、主菜：${mainDish.value}、副菜：${sideDish.value}、飲み物：${drink.value}。エネルギーバランス(総カロリー摂取量とPFCバランス)と栄養素バランスの観点などの観点から総合評価を10点満点で教えて。また、おすすめのメニューを簡潔に教えて。`;
   socket.emit("promptEvent", { prompt: inputPrompt }, (data) => {
     gptResponse.value = data.response;
@@ -110,32 +114,36 @@ const toGPT = () => {
     <button type="button" @click="toGPT" class="button-submit">AIの評価を聞く(10点満点)</button>
 
     <h3 class="subtitle">過去の{{userName}}さんのメニュー一覧</h3>
-    <table class="menu-table">
-      <thead>
-        <tr>
-          <th>日付</th>
-          <th>食事時間</th>
-          <th>主食</th>
-          <th>主菜</th>
-          <th>副菜</th>
-          <th>飲み物</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(menu, index) in pastMenu" :key="index">
-          <td>{{ menu[0] }}</td>
-          <td>{{ menu[1] === 1 ? '朝食' : menu[1] === 2 ? '昼食' : '夕食' }}</td>
-          <td>{{ menu[2] }}</td>
-          <td>{{ menu[3] }}</td>
-          <td>{{ menu[4] }}</td>
-          <td>{{ menu[5] }}</td>
-        </tr>
-      </tbody>
-    </table>
-    
+    <div class="scrollable-container">
+      <table class="menu-table">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>食事時間</th>
+            <th>主食</th>
+            <th>主菜</th>
+            <th>副菜</th>
+            <th>飲み物</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(menu, index) in pastMenu" :key="index">
+            <td>{{ menu[0] }}</td>
+            <td>{{ menu[1] === 1 ? '朝食' : menu[1] === 2 ? '昼食' : '夕食' }}</td>
+            <td>{{ menu[2] }}</td>
+            <td>{{ menu[3] }}</td>
+            <td>{{ menu[4] }}</td>
+            <td>{{ menu[5] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <h3 class="subtitle">AIの評価</h3>
-    <div v-if="gptResponse" class="response">
-      <p>{{ gptResponse }}</p>
+    <div class="scrollable-container">
+      <div v-if="gptResponse" class="response">
+        <p>{{ gptResponse }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -237,6 +245,14 @@ const toGPT = () => {
 
 .menu-table th {
   background-color: #f2f2f2;
+}
+
+.scrollable-container {
+  max-height: 200px;  /* 表示枠の高さを設定 */
+  overflow-y: auto;  /* 縦方向にスクロール可能にする */
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin-top: 8px;
 }
 
 .response {
