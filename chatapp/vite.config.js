@@ -3,6 +3,10 @@ import vue from "@vitejs/plugin-vue";
 import socketIoPlugin from "./plugins/socket.io.plugin";
 import socketEvents from "./socket_event";
 import fs from "fs"; // fsモジュールをインポート
+import { config } from 'dotenv'; // dotenvをインポート
+
+// dotenv設定を読み込む
+config();
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "");

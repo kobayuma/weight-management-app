@@ -3,6 +3,7 @@ import { inject, ref } from "vue"
 import { useRouter } from "vue-router"
 import socketManager from '../socketManager.js'
 
+
 // #region global state
 const userName = inject("userName")
 const inputPassword = ref("")
@@ -29,6 +30,7 @@ const onEnter = () => {
   //ログインイベントを送信
   socket.emit("loginEvent", { username: inputUserName.value, password: inputPassword.value }, (response) => {
     if (response.success) {
+      alert(`ようこそ！${inputUserName.value}さん`)
       // 入室メッセージを送信
       socket.emit("enterEvent", inputUserName.value + "さんが入室しました。")
       // 全体で使用するnameに入力されたユーザー名を格納
@@ -44,6 +46,7 @@ const goToRegister = () => {
   router.push({ name: 'register' });
 }
 // #endregion
+
 </script>
 
 <template>
