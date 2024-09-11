@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router"
-import Chat from "../components/Chat.vue"
 import Login from "../components/Login.vue"
 import Register from "../components/Register.vue"
 import Home from "../components/Home.vue"
@@ -31,17 +30,6 @@ const router = createRouter({
       component: Home,
       beforeEnter: (to, from, next) => {
         if(from.name === "login" || from.name === "chat" || from.name === "weights" || from.name === "mealcontents" || from.name === "register"){
-          next()
-        } else {
-          next({ name:"login" })
-        }
-      }
-    },{
-      path: "/chat/",
-      name: "chat",
-      component: Chat,
-      beforeEnter: (to, from, next) => {
-        if(from.name === "home"){
           next()
         } else {
           next({ name:"login" })

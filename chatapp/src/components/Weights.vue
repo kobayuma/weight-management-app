@@ -1,6 +1,7 @@
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">Weight Input</h1>
+    <h3 class="text-h3 font-weight-medium">体重記録</h3>
+    <button type="button" @click="$router.push('/home')" class="button-home">Home</button>
 
     <!-- Input field for weight -->
     <div class="mt-10">
@@ -210,6 +211,17 @@ const displayRanking = () => {
 }
 .button-normal:hover {
   background-color: #0056b3;
+}
+.button-home {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 table {
   width: 100%;
