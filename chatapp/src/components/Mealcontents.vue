@@ -1,6 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { inject, ref, reactive } from 'vue';
 import socketManager from '../socketManager.js'
+
+// #region global state
+const userName = inject("userName")
+// #endregion
 
 // #region reactive variable
 const gptResponse = ref("")
@@ -9,28 +13,62 @@ const stapleFood = ref("")
 const mainDish = ref("")
 const sideDish = ref("")
 const drink = ref("")
+const pastMenu = ref([])
 // #endregion
 
 const socket = socketManager.getInstance()
 
-const fetchOpenAIResponse = () => {
+const submitMeals = () => {
   if (mealTime.value === "") {
     alert("食事時間を選択してください。");
     return;
   }
-  const inputPrompt = `${mealTime.value}の内容は、主食：${stapleFood.value}、主菜：${mainDish.value}、副菜：${sideDish.value}、飲み物：${drink.value}。エネルギーバランス
-(総カロリー摂取量とPFCバランス)と栄養素バランスの観点の二つの観点で10点満点で点数をつけて。また、おすすめのメニューを簡潔に教えて。`;
+  const mealData = {
+    userName: userName.value,
+    mealTime: mealTime.value,
+    stapleFood: stapleFood.value,
+    mainDish: mainDish.value,
+    sideDish: sideDish.value,
+    drink: drink.value
+  };
   
+  socket.emit('mealsEvent', mealData, (response) => {
+    if (response.success) {
+      alert('食事内容が保存されました');
+    } else {
+      alert('食事内容の保存に失敗しました: ' + response.message);
+    }
+  });
+};
+
+const getPastMenu = () => {
+  // ユーザーの過去のメニューデータを取得
+  socket.emit("pastMenuEvent", userName.value, (response) => {
+    if (response.success) {
+      pastMenu.value = response.data;
+    } else {
+      alert('過去のメニューの取得に失敗しました: ' + response.message);
+    }
+  });
+}
+
+const toGPT = () => {
+  if (mealTime.value === "") {
+    alert("食事時間を選択してください。");
+    return;
+  }
+  const inputPrompt = `${mealTime.value}の内容は、主食：${stapleFood.value}、主菜：${mainDish.value}、副菜：${sideDish.value}、飲み物：${drink.value}。エネルギーバランス(総カロリー摂取量とPFCバランス)と栄養素バランスの観点などの観点から総合評価を10点満点で教えて。また、おすすめのメニューを簡潔に教えて。`;
   socket.emit("promptEvent", { prompt: inputPrompt }, (data) => {
     gptResponse.value = data.response;
   });
-};
+}
 
 
 </script>
 
 <template>
   <div class="container">
+    <p>ログインユーザ：{{ userName }}さん</p>
     <h1 class="text-h3 font-weight-medium">食事内容</h1>
     <button type="button" @click="$router.push('/home')" class="button-home">Home</button>
 
@@ -71,10 +109,41 @@ const fetchOpenAIResponse = () => {
       </div>
     </div>
     
-    <button type="button" @click="fetchOpenAIResponse" class="button-submit">送信</button>
+    <button type="button" @click="submitMeals" class="button-submit">データベースに保存</button>
+    <button type="button" @click="getPastMenu" class="button-submit">過去の自分のメニューを表示</button>
+    <button type="button" @click="toGPT" class="button-submit">AIの評価を聞く(10点満点)</button>
+
+    <h3 class="subtitle">過去の{{userName}}さんのメニュー一覧</h3>
+    <div class="scrollable-container">
+      <table class="menu-table">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>食事時間</th>
+            <th>主食</th>
+            <th>主菜</th>
+            <th>副菜</th>
+            <th>飲み物</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(menu, index) in pastMenu" :key="index">
+            <td>{{ menu[0] }}</td>
+            <td>{{ menu[1] === 1 ? '朝食' : menu[1] === 2 ? '昼食' : '夕食' }}</td>
+            <td>{{ menu[2] }}</td>
+            <td>{{ menu[3] }}</td>
+            <td>{{ menu[4] }}</td>
+            <td>{{ menu[5] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <h3 class="subtitle">AIの評価</h3>
-    <div v-if="gptResponse" class="response">
-      <p>{{ gptResponse }}</p>
+    <div class="scrollable-container">
+      <div v-if="gptResponse" class="response">
+        <p>{{ gptResponse }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -160,6 +229,30 @@ const fetchOpenAIResponse = () => {
 
 .button-submit:hover {
   background-color: #d05010;
+}
+
+.menu-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.menu-table th, .menu-table td {
+  border: 1px solid #000;  /* テーブル全体に罫線を追加 */
+  padding: 8px;
+  text-align: left;
+}
+
+.menu-table th {
+  background-color: #f2f2f2;
+}
+
+.scrollable-container {
+  max-height: 200px;  /* 表示枠の高さを設定 */
+  overflow-y: auto;  /* 縦方向にスクロール可能にする */
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin-top: 8px;
 }
 
 .response {
