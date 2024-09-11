@@ -7,12 +7,16 @@
     "start": "vite"
   },
   "dependencies": {
+    "chart.js": "^4.4.4",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "openai": "^4.58.0",
     "socket.io": "^4.5.3",
     "socket.io-client": "^4.5.3",
     "sqlite3": "^5.1.7",
     "vue": "^3.2.45",
+    "vue-chartjs": "^5.3.1",
     "vue-router": "^4.1.6",
     "vuetify": "^3.1.1"
   },
