@@ -1,9 +1,7 @@
-import db from '../db.js'; 
 import { handlePromptEvent } from './gpt.js';
 import { handleLoginEvent, handleUserRegistration } from './auth.js'
-import { handleMealSubmission } from './meals.js';
-import { config } from 'dotenv';
-config();
+import { handleMealSubmission, handlePastMenu } from './meals.js';
+
 
 export default (io, socket) => {
   // 入室メッセージをクライアントに送信する
@@ -26,6 +24,11 @@ export default (io, socket) => {
 
   // 食事内容をDBに保存する
   socket.on("mealsEvent", handleMealSubmission);
+
+  // DBから過去の食事内容を取得する
+  socket.on("pastMenuEvent", (userName, callback) => {
+    handlePastMenu(userName, callback);
+  });
 
   // ユーザー名とパスワードがDBに含まれているかを比較する
   socket.on("loginEvent", (data, callback) => {

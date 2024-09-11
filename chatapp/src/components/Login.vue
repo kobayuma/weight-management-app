@@ -30,7 +30,7 @@ const onEnter = () => {
   //ログインイベントを送信
   socket.emit("loginEvent", { username: inputUserName.value, password: inputPassword.value }, (response) => {
     if (response.success) {
-      alert(`ようこそ！${inputUserName.value}さん`)
+      // alert(`ようこそ！${inputUserName.value}さん`)
       // 入室メッセージを送信
       socket.emit("enterEvent", inputUserName.value + "さんが入室しました。")
       // 全体で使用するnameに入力されたユーザー名を格納
