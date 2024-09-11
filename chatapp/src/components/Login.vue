@@ -50,25 +50,70 @@ const goToRegister = () => {
 </script>
 
 <template>
-  <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">ChatLogin</h1>
-    <div class="mt-10">
-      <p>ユーザー名</p>
-      <input type="text" class="user-name-text" v-model="inputUserName" @keypress.enter="onEnter"/>
+  <div class="container">
+    <h1 class="title">楽楽減量</h1>
+    <div class="input-group">
+      <p calss="label">ユーザー名</p>
+      <input type="text" class="input" v-model="inputUserName" @keypress.enter="onEnter"/>
     </div>
-    <div class="mt-10">
-      <p>パスワード</p>
-      <input type="password" class="user-name-text" v-model="inputPassword" @keypress.enter="onEnter"/>
+    <div class="input-group">
+      <p class="label">パスワード</p>
+      <input type="password" class="input" v-model="inputPassword" @keypress.enter="onEnter"/>
     </div>
-    <button type="button" @click="onEnter" class="button-normal">入室する</button>
-    <button type="button" @click="goToRegister" class="button-normal mt-4">新規登録</button>
+    <button type="button" @click="onEnter" class="button">入室する</button>
+    <button type="button" @click="goToRegister" class="button">新規登録</button>
   </div>
 </template>
 
 <style scoped>
-.user-name-text {
-  width: 200px;
-  border: 1px solid #888;
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px;
+}
+.title {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #ff6600;
+}
+
+.input-group {
+  width: 100%;
   margin-bottom: 16px;
 }
+
+.label {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.button {
+  background-color: #ff6600;
+  color: #fff;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+}
+
 </style>
