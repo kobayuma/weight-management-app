@@ -26,8 +26,7 @@ onMounted(() => {
 // #region browser event handler
 const onPublish = () => {
   if (chatContent.value === "") return;
-  const publishedTime = new Date().toLocaleTimeString({ timeZone: 'Asia/Tokyo' });
-  socket.emit("publishEvent", "[" + publishedTime + "]  " + userName.value + "さん：" + chatContent.value);
+  socket.emit("publishEvent", userName.value + "さん：" + chatContent.value);
   chatContent.value = "";
 };
 

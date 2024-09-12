@@ -112,7 +112,7 @@ const toGPT = () => {
     <button type="button" @click="getPastMenu" class="button-submit">過去の自分のメニューを表示</button>
     <button type="button" @click="toGPT" class="button-submit">AIの評価を聞く(10点満点)</button>
 
-    <h3 class="subtitle">過去の{{userName}}さんのメニュー一覧</h3>
+    <h3 class="subtitle">過去の{{userName}}さんのメニュー</h3>
     <div class="scrollable-container">
     <table class="menu-table">
       <thead>
