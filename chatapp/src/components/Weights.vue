@@ -38,16 +38,17 @@
           <tr>
             <th>順位</th>
             <th>ユーザー名</th>
-            <th>最新の体重</th>
+            <th>減量</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in ranking" :key="user.username">
-            <td>{{ index + 1 }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.weight }} kg</td>
-          </tr>
-        </tbody>
+  <tr v-for="(user, index) in ranking" :key="user.username">
+    <td>{{ index + 1 }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.weightDifference === 'No data' ? 'No data' : user.weightDifference + ' kg' }}</td>
+  </tr>
+</tbody>
+
       </table>
     </div>
   </div>
@@ -120,6 +121,24 @@ const chartOptions = ref({
 // Fetch weight history from the latest data in the database
 const fetchWeightHistory = () => {
   if (socket && userName.value) {
+    // Reset chart data before fetching new data
+    chartData.value = {
+      labels: [],
+      datasets: [
+        {
+          label: 'Weight Over Time',
+          data: [],
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: true,
+          pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+          pointBorderColor: '#fff',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+        }
+      ]
+    };
+
     // Emit an event to fetch the latest weight history from the database
     socket.emit("getWeightHistory", userName.value, (response) => {
       if (response.success) {

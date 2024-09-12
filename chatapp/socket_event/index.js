@@ -96,24 +96,63 @@ export default (io, socket) => {
   });
 
   // ランキングを取得する
-  socket.on("getLatestWeightsForRanking", (callback) => {
-    // Fetch the latest weight for each user by joining the users and weights tables
-    const query = `
-      SELECT users.name as username, weights.weights as weight, MAX(weights.date) as latest_date
-      FROM users
-      INNER JOIN weights ON users.id = weights.user_id
-      GROUP BY users.id
-      ORDER BY weights.weights DESC
-    `;
-
-    db.all(query, (err, rows) => {
-      if (err) {
-        console.error('Error fetching ranking data:', err.message);
-        callback({ success: false, message: 'Error fetching ranking data' });
-      } else {
-        console.log('Fetched ranking data:', rows);  // Log fetched ranking data
-        callback({ success: true, data: rows });
-      }
+    socket.on("getLatestWeightsForRanking", (callback) => {
+      // Fetch the latest two weights for each user
+      const query = `
+        SELECT users.name as username, weights.weights as weight, weights.date as weight_date
+        FROM users
+        INNER JOIN weights ON users.id = weights.user_id
+        ORDER BY users.id, weights.date DESC
+      `;
+    
+      db.all(query, (err, rows) => {
+        if (err) {
+          console.error('Error fetching ranking data:', err.message);
+          callback({ success: false, message: 'Error fetching ranking data' });
+        } else {
+          const userWeights = {};
+    
+          // Group weights by username and store the latest two weights for each user
+          rows.forEach(row => {
+            const { username, weight, weight_date } = row;
+            if (!userWeights[username]) {
+              userWeights[username] = [];
+            }
+            if (userWeights[username].length < 2) {
+              userWeights[username].push({ weight, date: weight_date });
+            }
+          });
+    
+          // Calculate the weight difference and rank users
+          const ranking = Object.keys(userWeights).map(username => {
+            const weights = userWeights[username];
+            
+            if (weights.length === 2) {
+              // Calculate the difference between the latest and the previous weight
+              const latestWeight = weights[0].weight;
+              const previousWeight = weights[1].weight;
+              const difference = latestWeight - previousWeight;
+              return { username, weightDifference: difference };
+            } else {
+              // If there is only one weight, mark as "No data"
+              return { username, weightDifference: "No data" };
+            }
+          });
+    
+          // Sort the ranking:
+          // - Sort by weight difference in ascending order (reverse ranking),
+          // - Place "No data" always at the end.
+          const sortedRanking = ranking.sort((a, b) => {
+            if (a.weightDifference === "No data") return 1;  // Move "No data" to the bottom
+            if (b.weightDifference === "No data") return -1;
+            return a.weightDifference - b.weightDifference;  // Sort by weight difference (ascending)
+          });
+    
+          console.log('Fetched ranking data:', sortedRanking);
+          callback({ success: true, data: sortedRanking });
+        }
+      });
     });
-  });
+    
+  
 }
