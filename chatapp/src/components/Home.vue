@@ -26,13 +26,13 @@ onMounted(() => {
 // #region browser event handler
 const onPublish = () => {
   if (chatContent.value === "") return;
-  const publishedTime = new Date().toLocaleTimeString({ timeZone: 'Asia/Tokyo' });
-  socket.emit("publishEvent", "[" + publishedTime + "]  " + userName.value + "さん：" + chatContent.value);
+  socket.emit("publishEvent", userName.value + "さん：" + chatContent.value);
   chatContent.value = "";
 };
 
 const onExit = () => {
   socket.emit("exitEvent", userName.value + "さんが退室しました。");
+  router.push({ name: "login" });
 };
 
 const onMemo = () => {
@@ -83,51 +83,109 @@ const toMealcontents = () => {
 </script>
 
 <template>
-  <div class="mx-auto my-5 px-4">
-    <p>ログインユーザ：{{ userName }}さん</p>
-    <h1 class="text-h3 font-weight-medium">Home</h1>
-    <button type="button" @click="toWeights" class="button-normal">体重</button>
-    <button type="button" @click="toMealcontents" class="button-normal">食事内容</button>
-
-    <div class="mt-10">
-      <textarea v-model.trim="chatContent" @keypress.enter="onPublish" variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area"></textarea>
-      <div class="mt-5">
-        <button class="button-normal" @click="onPublish">投稿</button>
-        <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
+  <div class="container">
+    <button type="button" class="exit-button" @click="onExit">退室</button>
+    <p>{{ userName }}さん</p>
+    <h1 class="title">Home</h1>
+    <div class="button-group-horizontal">
+      <button type="button" @click="toWeights" class="button">体重記録</button>
+      <button type="button" @click="toMealcontents" class="button">食事内容</button>
+    </div>
+    <div class="chat-area">
+      <textarea v-model.trim="chatContent" @keypress.enter="onPublish" class="textarea" placeholder="投稿文を入力してください"></textarea>
+      <div class="button-group-horizontal">
+        <button class="button router-button" @click="onPublish">投稿</button>
+        <button class="button router-button" @click="onMemo">メモ</button>
       </div>
-      <div class="mt-5" v-if="chatList.length !== 0">
-        <ul>
-          <li class="item mt-4" v-for="(chat, i) in chatList.slice().reverse()" :key="i">{{ chat }}</li>
-        </ul>
+      <div class="scrollable-container">
+        <div v-if="chatList.length !== 0" class="chat-list">
+          <ul>
+            <li class="item mt-4" v-for="(chat, i) in chatList.slice().reverse()" :key="i">{{ chat }}</li>
+          </ul>
+        </div>
       </div>
     </div>
-    <router-link to="/" class="link">
-      <button type="button" class="button-normal button-exit" @click="onExit">退室する</button>
-    </router-link>
   </div>
 </template>
 
 <style scoped>
-.link {
-  text-decoration: none;
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px;
+  position: relative;
 }
 
-.area {
-  width: 500px;
-  border: 1px solid #000;
-  margin-top: 8px;
+.exit-button {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background-color: #ff6600;
+  color: #fff;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.item {
+.title {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #ff6600;
+}
+
+.button-group-horizontal {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.button {
+  background-color: #ff6600;
+  color: #fff;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+  width: 48%;
+}
+
+.chat-area {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.chat-list {
+  width: 100%;
+}
+
+.chat-item {
   display: block;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
 }
 
-.util-ml-8px {
-  margin-left: 8px;
-}
-
-.button-exit {
-  color: #000;
+.scrollable-container {
+  max-height: 200px;  /* 表示枠の高さを設定 */
+  overflow-y: auto;  /* 縦方向にスクロール可能にする */
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 4px;
   margin-top: 8px;
 }
 </style>

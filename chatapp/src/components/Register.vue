@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref} from 'vue'
+import { inject, ref } from 'vue'
 import { useRouter } from "vue-router"
 import socketManager from '../socketManager.js'
 
@@ -15,7 +15,7 @@ const inputPassword = ref("")
 // #region browser event handler
 const onRegister = () => {
   // ユーザー名,パスワードが入力されているかチェック
-  if (inputUserName.value === "" ||inputPassword.value === "") {
+  if (inputUserName.value === "" || inputPassword.value === "") {
     alert("すべてのフィールドに入力してください。");
     return;
   }
@@ -31,31 +31,70 @@ const onRegister = () => {
     }
   });
 }
-
 </script>
 
 <template>
-  <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">ユーザー登録</h1>
-    <div class="mt-10">
-      <p>ユーザー名</p>
-      <input type="text" class="user-name-text" v-model="inputUserName" />
+  <div class="container">
+    <h1 class="title">新規登録画面</h1>
+    <div class="input-group">
+      <p class="label">ユーザー名</p>
+      <input type="text" class="input" v-model="inputUserName" />
     </div>
-    <div class="mt-10">
-      <p>パスワード</p>
-      <input type="text" class="password-text" v-model="inputPassword" />
+    <div class="input-group">
+      <p class="label">パスワード</p>
+      <input type="password" class="input" v-model="inputPassword" />
     </div>
-    <button type="button" @click="onRegister" class="button-normal">登録する</button>
+    <button type="button" @click="onRegister" class="button">登録する</button>
+    <router-link to="/">
+      <button type="button" class="button">ログイン画面に戻る</button>
+    </router-link>
   </div>
-  <router-link to="/" class="link">
-      <button type="button" class="button-normal">login</button>
-  </router-link>
 </template>
 
 <style scoped>
-.user-name-text, .email-text, .password-text {
-  width: 200px;
-  border: 1px solid #888;
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #ff6600;
+}
+
+.input-group {
+  width: 100%;
   margin-bottom: 16px;
 }
+
+.label {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button {
+  background-color: #ff6600;
+  color: #fff;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+}
+
 </style>

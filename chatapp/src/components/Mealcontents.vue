@@ -68,7 +68,6 @@ const toGPT = () => {
 
 <template>
   <div class="container">
-    <p>ログインユーザ：{{ userName }}さん</p>
     <h1 class="text-h3 font-weight-medium">食事内容</h1>
     <button type="button" @click="$router.push('/home')" class="button-home">Home</button>
 
@@ -113,36 +112,36 @@ const toGPT = () => {
     <button type="button" @click="getPastMenu" class="button-submit">過去の自分のメニューを表示</button>
     <button type="button" @click="toGPT" class="button-submit">AIの評価を聞く(10点満点)</button>
 
-    <h3 class="subtitle">過去の{{userName}}さんのメニュー一覧</h3>
+    <h3 class="subtitle">過去の{{userName}}さんのメニュー</h3>
     <div class="scrollable-container">
-      <table class="menu-table">
-        <thead>
-          <tr>
-            <th>日付</th>
-            <th>食事時間</th>
-            <th>主食</th>
-            <th>主菜</th>
-            <th>副菜</th>
-            <th>飲み物</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(menu, index) in pastMenu" :key="index">
-            <td>{{ menu[0] }}</td>
-            <td>{{ menu[1] === 1 ? '朝食' : menu[1] === 2 ? '昼食' : '夕食' }}</td>
-            <td>{{ menu[2] }}</td>
-            <td>{{ menu[3] }}</td>
-            <td>{{ menu[4] }}</td>
-            <td>{{ menu[5] }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <table class="menu-table">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>食事時間</th>
+          <th>主食</th>
+          <th>主菜</th>
+          <th>副菜</th>
+          <th>飲み物</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(menu, index) in pastMenu" :key="index">
+          <td>{{ menu[0] }}</td>
+          <td>{{ menu[1] === 1 ? '朝食' : menu[1] === 2 ? '昼食' : '夕食' }}</td>
+          <td>{{ menu[2] }}</td>
+          <td>{{ menu[3] }}</td>
+          <td>{{ menu[4] }}</td>
+          <td>{{ menu[5] }}</td>
+        </tr>
+      </tbody>
+    </table>
     </div>
-
+    
     <h3 class="subtitle">AIの評価</h3>
     <div class="scrollable-container">
-      <div v-if="gptResponse" class="response">
-        <p>{{ gptResponse }}</p>
+    <div v-if="gptResponse" class="response">
+      <p>{{ gptResponse }}</p>
       </div>
     </div>
   </div>
