@@ -88,8 +88,8 @@ const toMealcontents = () => {
     <p>{{ userName }}さん</p>
     <h1 class="title">Home</h1>
     <div class="button-group-horizontal">
-      <button type="button" @click="toWeights" class="button">体重記録</button>
-      <button type="button" @click="toMealcontents" class="button">食事内容</button>
+      <button type="button" @click="toWeights" class="button-blue">体重記録</button>
+      <button type="button" @click="toMealcontents" class="button-blue">食事内容</button>
     </div>
     <div class="chat-area">
       <textarea v-model.trim="chatContent" @keypress.enter="onPublish" class="textarea" placeholder="投稿文を入力してください"></textarea>
@@ -146,6 +146,19 @@ const toMealcontents = () => {
 
 .button {
   background-color: #ff6600;
+  color: #fff;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+  width: 48%;
+}
+
+.button-blue {
+  background-color: #007bff;
   color: #fff;
   padding: 8px;
   margin-bottom: 8px;
